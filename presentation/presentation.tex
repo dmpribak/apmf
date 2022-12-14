@@ -1,0 +1,213 @@
+\documentclass[mathserif]{beamer}
+\usetheme{metropolis}
+\metroset{block=fill}
+
+\usepackage{amsmath,amssymb}
+\usepackage{tabularray}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{graphs}
+\usetikzlibrary{graphs.standard}
+\usetikzlibrary{quotes}
+
+\begin{document}
+\title{All-Pairs Max-Flow Algorithms and Implementations}
+\author{Dillan Pribak}
+
+
+\begin{frame}
+\maketitle
+\end{frame}
+
+\begin{frame}
+	\frametitle{Naive Approach}
+	Run a max flow algorithm on all vertex pairs.\\
+	Let $G(V,E,c)$ be a directed graph with integral capacities.\\
+	$m = |E|$\\ 
+	$n = |V|$\\
+	$f=$ max flow in G\\
+	\textbf{All-Pairs Ford-Fulkerson:} $O(fm\cdot n^2)= O(fmn^2)$\\
+	\textbf{All-Pairs Dinitz:} $O(mn^2\cdot n^2) = O(mn^4)$
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Implementation Details: Overview}
+	\begin{block}{My work:}
+		\begin{itemize}
+			\item Functions for building and updating residuals.
+			\item DFS, BFS, blocking flow algorithms.
+		\end{itemize}
+	\end{block}
+	Written in Python.\\
+	Used \texttt{networkx} package for graph data structure.\\
+	Implementations are not fully optimized.
+
+	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Implementation Details: Ford-Fulkerson}
+
+	\begin{algorithmic}[1]
+		\Procedure{Ford-Fulkerson}{$s,t,G=(V,E)$}
+			\State $f \gets 0$	
+			\State $G_{f} \gets G$
+			\While{ there is a path $P$ from $s$ to $t$ in $G_{f}$}
+				\State $f' \gets$ maximum flow along $P$
+				\State Update residual $G_{f}$ accordingly
+				\State $f \gets f + f'$ 
+	\end{algorithmic}
+	\begin{block}{Custom DFS:}
+		\begin{itemize}
+			\item Returns list of edges in path from $s$ to $t$.\\
+			\item Ignores zero-weight edges.\\
+			\item Return path if $t$ found, otherwise return ``no path found''.
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+	\frametitle{Implementation Details: Dinitz}
+		\begin{algorithmic}[1]	
+			\Procedure{Dinitz}{$s,t,G=(V,E)$}
+				\State $f \gets 0$
+				\While{$f$ is not a max flow}	
+					\State Let $G_{f}$ be the residual
+					\State Let $E'$ be edges in all shortest paths from $s$ to $t$
+					\State $f' \gets$ any blocking flow in $G'=(V,E')$
+					\State $f \gets f + f'$
+		\end{algorithmic}
+	\begin{block}{Blocking Flow}
+		\begin{itemize}
+			\item Find path from $s$ to $t$ (DFS).
+			\item Push maximum flow through that path.
+			\item Continue until no paths to $t$.
+		\end{itemize}	
+	\end{block}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Implementation Details: Dinitz}
+	\begin{block}{Custom BFS:}
+		\begin{itemize}
+			\item Each iteration expands search out by one.
+			\item Once $t$ is found, finish that level to check for other paths.
+			\item Maintains a parent list for backtracking where vertices can have multiple parents.
+			\item Returns all edges in shortest paths from $s$ to $t$.
+		\end{itemize}
+	\end{block}
+	\begin{figure}[h]
+		\centering	
+		\tikz \graph [nodes={draw,circle}] {
+			s -> {a,b} -> c -> t
+		};
+		\caption{Node $c$ has two parents in all shortest paths.}
+		\label{fig:}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Better Approach: Gomory-Hu Tree}
+	\begin{definition}
+		A \alert{Gomory-Hu Tree} is a tree on the vertices of $G$ where the minimum edge weight in the path between two vertices is the max-flow between those vertices.
+	\end{definition}
+
+	\textbf{Interpretation:} A tree where the edges are all the bottlenecks.
+	\begin{figure}[h]
+		\centering
+		\tikz \graph[nodes={draw, circle}, no placement]{
+			{a[at={(0:0)}]}--{b[at={(1,1)}],c[at={(1,-1)}]},b--c,c--d[at={(2,0)}],a--d,b--d,d--e[at={(3,0)}],e--{f[at={(4,1)}],g[at={(4,-1)}]},f--g
+		};
+		\caption{Passage from left side to right side bottlenecked by $(e,f)$ edge.}
+		\label{fig:}
+	\end{figure}	
+\end{frame}
+
+\begin{frame}
+	\frametitle{Better Approach: Gomory-Hu Tree}
+	\textbf{Example:}
+	
+	\begin{figure}[h]
+		\centering
+	\tikz \graph[nodes={draw,circle}, no placement] {
+		a[at={(0:0)}],b[at={(1,0)}],c[at={(2,1)}],d[at={(3,0)}],e[at={(2,-1)}],
+		a--["1"]b,a--["1"']e,b--["1"]{c,e},c--{b,d},d--["1"']c,d--["1"]e,e--{a,b}
+	};
+	\hspace{20pt}
+	\tikz \graph[nodes={draw,circle}, no placement] {
+		a[at={(0:0)}],b[at={(1,0)}],c[at={(2,1)}],d[at={(3,0)}],e[at={(2,-1)}],
+		a--["2"]b,b--["2"]c,b--["3"]e,c--["2"]d
+	};
+
+		\caption{A flow network (left) and its Gomory-Hu tree (right)}
+		\label{fig:g}
+	\end{figure}
+
+\end{frame}
+
+\begin{frame}
+	\frametitle{Finding Gomory-Hu Tree}
+	\begin{block}{Algorithm [Gomory, Hu 1961]}
+		Start with all vertices in a big pot. Split into smaller pots via min-cuts. Continue until all pots have one node.	
+	\end{block}
+
+	\begin{figure}[h]
+	\centering
+	\tikz \graph[nodes={draw,circle}, no placement]{
+		abcdef
+	};	
+	\hspace{20pt}
+	\tikz \graph[nodes={draw,circle}, no placement]{
+		abe[at={(0:0)}],cd[at={(1.5,0)}],
+		abe--["2"]cd
+	};
+	\hspace{20pt}
+	\tikz \graph[nodes={draw,circle}, no placement]{
+		a[at={(0:0)}],be[at={(1.5,0)}],cd[at={(3,0)}],
+		a--["2"]be--["2"]cd
+	};
+
+	\vspace{10pt}
+	\tikz \graph[nodes={draw,circle}, no placement]{
+		a[at={(0:0)}],b[at={(1,0)}],e[at={(1,-1)}],cd[at={(2.5,0)}],
+		a--["2"]b--["2"]cd,b--["3"]e
+	};
+	\hspace{20pt}
+	\tikz \graph[nodes={draw,circle}, no placement]{
+		a[at={(0:0)}],b[at={(1,0)}],e[at={(1,-1)}],c[at={(2,0)}],d[at={(2,-1)}],
+		a--["2"]b--["2"]c,b--["3"]e,c--["2"]d
+	};
+	\caption{Progression of Gomory-Hu algorithm on graph from figure \ref{fig:g}}
+	\end{figure}
+\end{frame}
+
+\begin{frame}
+	\frametitle{Gomory-Hu Algorithm Analysis}
+		\begin{block}{Generating Tree}		
+		\begin{itemize}
+			\item Creates $(n-1)$ splits $\implies$ makes $(n-1)$ calls to max-flow.\\
+			\item Better than naive method! (Makes $O(n^2)$ calls to max-flow).\\
+		\end{itemize}
+		\end{block}
+
+		\begin{block}{Accessing Tree}
+			\begin{itemize}
+		\item A flow value can be retrieved efficiently using a shortest path algorithm.\\
+		\item To get constant access time, convert into a table in $O(n^2)$ time using a good APSP algorithm.
+		\end{itemize}
+		\end{block}
+
+		\textbf{Note:} Only works on undirected graphs!
+\end{frame}
+
+\begin{frame}
+	\frametitle{Implementation Details: Gomory-Hu Algorithm}
+	
+\end{frame}
+
+
+\end{document}

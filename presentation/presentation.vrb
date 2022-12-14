@@ -1,0 +1,18 @@
+\frametitle{Implementation Details: Dinitz}
+		\begin{algorithmic}[1]	
+			\Procedure{Dinitz}{$s,t,G=(V,E)$}
+				\State $f \gets 0$
+				\While{$f$ is not a max flow}	
+					\State Let $G_{f}$ be the residual
+					\State Let $E'$ be edges in all shortest paths from $s$ to $t$
+					\State $f' \gets$ any blocking flow in $G'=(V,E')$
+					\State $f \gets f + f'$
+		\end{algorithmic}
+	\begin{block}{Blocking Flow}
+		\begin{itemize}
+			\item Find path from $s$ to $t$ (DFS).
+			\item Push maximum flow through that path.
+			\item Continue until no paths to $t$.
+		\end{itemize}	
+	\end{block}
+
