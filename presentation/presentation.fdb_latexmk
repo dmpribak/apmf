@@ -1,5 +1,5 @@
 # Fdb version 3
-["pdflatex"] 1670984463 "presentation.tex" "presentation.pdf" "presentation" 1670984463
+["pdflatex"] 1671007592 "presentation.tex" "presentation.pdf" "presentation" 1671007592
   "/home/dmpribak/texmf/tex/latex/algorithmicx/algorithmicx.sty" 1160617237 26750 ce139c05a983e19ddca355b43e29c395 ""
   "/home/dmpribak/texmf/tex/latex/algorithmicx/algpseudocode.sty" 1160617237 3457 d9077efe6b74c5a094199256af8d7d9a ""
   "/home/dmpribak/texmf/tex/latex/beamer/beamer.cls" 1663185823 12413 5a3669e34c7eedd2011faf100dfb9725 ""
@@ -229,11 +229,11 @@
   "/usr/share/texmf-dist/web2c/texmf.cnf" 1650183167 39911 2da6c67557ec033436fe5418a70a8a61 ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1667959826 334215 ad2feb41952e3720830b65f83a01c5b0 ""
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1667959819 2927665 a023871d4ef7f1b195314d9f19e9e2b8 ""
-  "presentation.aux" 1670984437 2620 df6bbd1bebeb9416d55923e3111ff6ae "pdflatex"
-  "presentation.nav" 1670984437 1202 a971439ba5eedf62b158aa4c3f07763d "pdflatex"
+  "presentation.aux" 1671007517 2878 c1e787ccf903baeb9f893ea57d9e5463 "pdflatex"
+  "presentation.nav" 1671007517 1388 57892d0edc07a44b522b4716a3a91942 "pdflatex"
   "presentation.out" 0 -1 0 "pdflatex"
-  "presentation.tex" 1670984462 6096 3c26342cb48dc0a1b3839f4425dc6b7c ""
-  "presentation.vrb" 1670984465 586 8773360ea9ddffd3ed3227e967011f89 "pdflatex"
+  "presentation.tex" 1671007590 6829 22ae44483efeaab1756994ea4d199387 ""
+  "presentation.vrb" 1671007594 586 8773360ea9ddffd3ed3227e967011f89 "pdflatex"
   (generated)
   "presentation.aux"
   "presentation.log"

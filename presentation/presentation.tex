@@ -206,8 +206,30 @@
 
 \begin{frame}
 	\frametitle{Implementation Details: Gomory-Hu Algorithm}
+	\begin{itemize}
+		\item Built data structure for handling grouped vertices.
+		\item Lots of things going on with splitting and contracting vertices.
+		\item Implemented algorithm to find min cuts.
+	\end{itemize}
 	
 \end{frame}
 
+\begin{frame}
+	\frametitle{Modern Results in Gomory-Hu Trees}	
+	\begin{block}{Result [Abboud et. al., 2022]}
+		A Gomory-Hu tree for a graph can be found in $O(n^2)$ time.
+	\end{block}
+	\begin{itemize}
+		\item The new algorithm uses tree packing to find the min cuts.
+		\item The original Gomory-Hu algorithm was state of the art for general graphs for over 60 years.
+		\item Faster solutions have been known for special cases.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}[standout]
+	github.com/dmpribak/apmf
+	
+\end{frame}
 
 \end{document}
